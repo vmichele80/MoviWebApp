@@ -1,6 +1,20 @@
-.venv
-data
-main.py
-.env
-.idea
+# Virtual environment
+.venv/
+venv/
+
+# Python cache
 __pycache__/
+*.pyc
+
+# Environment variables
+.env
+
+# IDE
+.idea/
+
+# Database
+*.db
+data/
+
+# OS files
+.DS_Store
