@@ -27,10 +27,19 @@ with app.app_context():
 
 @app.route('/')
 def home():
+    """
+    The home page of your application. Show a list of all registered
+    users and a form for adding new users. (This route is GET by default.)
+    """
     return "Welcome to MoviWeb App!"
 
-@app.route('/users')
+@app.route('/users', methods=['POST'])
 def list_users():
+    """
+    When the user submits the “add user” form, a POST request is made.
+    The server receives the new user info, adds it to the database, then
+    redirects back to /.
+    """
     users = data_manager.get_users()
     if not users:
         return "No users found"
@@ -62,6 +71,38 @@ def update_user():
         return "User not found"
 
     return f"Updated user: {updated_user.id}: {updated_user.name}"
+
+@app.route('/users/<int:user_id>/movies', methods=['GET'])
+    def get_list_of_users_favorites():
+    """When you click on a user name, the app retrieves that user’s list of
+    favorite movies and displays it."""
+    pass
+
+
+@app.route('/users/<int:user_id>/movies', methods=['POST'])
+    def add_movie_to_favorites():
+    """
+    Add a new movie to a user’s list of favorite movies.
+    """
+    #here we need furthermore to fetch the information from the IMDb service
+    pass
+
+
+@app.route('/users/<int:user_id>/movies/<int:movie_id>/update', methods=['POST'])
+    def update_movie():
+    """
+    Modify the title of a specific movie in a user’s list, without depending 
+    on OMDb for corrections.
+    """
+    pass
+
+@app.route('/users/<int:user_id>/movies/<int:movie_id>/delete', methods=['POST']
+    def delete_movie():
+    """
+    Remove a specific movie from a user’s favorite movie list.
+    """
+    pass
+
 
 if __name__ == '__main__':
   #with app.app_context():
