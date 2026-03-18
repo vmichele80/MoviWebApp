@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from data_manager import DataManager
 from models import db, Movie
 import os
@@ -19,13 +19,52 @@ db.init_app(app)  # Link the database and the app. This is the reason you need t
 
 data_manager = DataManager() # Create an object of your DataManager class
 
+with app.app_context():
+    db.create_all()
+    print("Tables created.")
+
+
 
 @app.route('/')
 def home():
     return "Welcome to MoviWeb App!"
 
+@app.route('/users')
+def list_users():
+    users = data_manager.get_users()
+    if not users:
+        return "No users found"
+
+    return "<br>".join([f"{user.id}: {user.name}" for user in users])
+
+
+@app.route("/add_user")
+def add_user():
+    name = request.args.get("name")
+
+    if not name:
+        return "Provide a name"
+
+    user = data_manager.create_user(name)
+    return f"Created user {user.id}: {user.name}"
+
+@app.route("/update_user")
+def update_user():
+    user_id = request.args.get("user_id")
+    new_name = request.args.get("name")
+
+    if not user_id or not new_name:
+        return "Use /update_user?user_id=2&name=Anna"
+
+    updated_user = data_manager.update_user(int(user_id), new_name)
+
+    if updated_user is None:
+        return "User not found"
+
+    return f"Updated user: {updated_user.id}: {updated_user.name}"
+
 if __name__ == '__main__':
-  with app.app_context():
-    db.create_all()
+  #with app.app_context():
+    #db.create_all()
 
   app.run()

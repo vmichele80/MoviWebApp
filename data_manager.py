@@ -17,6 +17,15 @@ class DataManager:
         # Return a list of all users in your database.
         return User.query.all()
 
+    # I found myself insert the same user by mistake
+    def update_user(self, user_id, new_name):
+        user = User.query.get(user_id)
+        if user is None:
+            return None
+
+        user.name = new_name
+        db.session.commit()
+        return user
 
 
     def get_movies(self, user_id):
