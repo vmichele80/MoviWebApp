@@ -27,12 +27,13 @@ with app.app_context():
 
 
 @app.route('/')
-def home():
+def index():
     """
     The home page of your application. Show a list of all registered
     users and a form for adding new users. (This route is GET by default.)
     """
-    return "Welcome to MoviWeb App!"
+    users = data_manager.get_users()
+    return render_template('index.html', users=users)
 
 @app.route('/users', methods=['GET'])
 def list_users():
@@ -49,7 +50,7 @@ def list_users():
 
 
 @app.route("/add_user", methods=['POST'])
-def add_user():
+def create_user():
     """
     it adds a new user
     """
