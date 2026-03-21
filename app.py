@@ -152,20 +152,24 @@ def update_movie(user_id, movie_id):
     Modify the title of a specific movie in a user’s list, without depending
     on OMDb for corrections.
     """
-    new_title = request.form.get("title") or request.args.get("title")
+    new_title = request.form.get("title")
 
     if not new_title:
-        return "Provide a new title"
+        flash("Please provide a new title.")
+        return redirect(url_for('get_list_of_users_favorites', user_id=user_id))
 
     updated_movie = data_manager.update_movie(movie_id, {"title": new_title})
 
     if updated_movie is None:
-        return "Movie not found"
+        flash("Movie not found.")
+        return redirect(url_for('get_list_of_users_favorites', user_id=user_id))
 
     # Checks if movie belongs to this user favorites
     if updated_movie.user_id != user_id:
-        return "Movie does not belong to this user"
+        flash("Movie does not belong to this user.")
+        return redirect(url_for('get_list_of_users_favorites', user_id=user_id))
 
+    flash(f"Movie updated to '{updated_movie.title}'.")
     return redirect(url_for('get_list_of_users_favorites', user_id=user_id))
 
     # This was good for BE testing when no UI was available
