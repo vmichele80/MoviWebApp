@@ -1,10 +1,11 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, flash
 from data_manager import DataManager
 from models import db, Movie
 from api_requests import retrieve_movie_data_from_api
 import os
 
 app = Flask(__name__)
+app.secret_key = "dev-secret-key"
 
 
 
@@ -101,13 +102,18 @@ def get_list_of_users_favorites(user_id):
     favorite movies and displays it."""
     movies = data_manager.get_movies(user_id)
 
-    if not movies:
-        return f"No favorite movies found for user {user_id}"
+    # if not movies:
+    #    return f"No favorite movies found for user {user_id}"
 
+    return render_template('movies.html', movies=movies, user_id=user_id)
+
+    """
+    # This was good only for testing purposes. Remove before publishing
     return "<br>".join([
         f"{movie.id}: {movie.title} - {movie.director} ({movie.year})"
         for movie in movies
     ])
+    """
 
 
 @app.route('/users/<int:user_id>/movies', methods=['POST'])
@@ -115,22 +121,28 @@ def add_movie_to_favorites(user_id):
     """
     Add a new movie to a user’s list of favorite movies.
     """
-    movie_title = request.form.get("title") or request.args.get("title")
+    movie_title = request.form.get("title")
 
     if not movie_title:
-        return "Provide a movie title"
+        flash("Please provide a movie title.")
+        return redirect(url_for('get_list_of_users_favorites', user_id=user_id))
 
     # here we need furthermore to fetch the information from the IMDb service
     movie_data = retrieve_movie_data_from_api(movie_title)
 
     if movie_data is None:
-        return "Movie not found"
+        flash("Movie not found.")
+        return redirect(url_for('get_list_of_users_favorites', user_id=user_id))
 
     movie_data["user_id"] = user_id
     #now movie_data is complete and can be passed over the function
-    new_movie = data_manager.add_movie(movie_data)
+    data_manager.add_movie(movie_data)
 
-    return f"Added movie: {new_movie.id}: {new_movie.title}"
+    flash(f"Movie '{movie_data['title']}' added successfully.")
+    return redirect(url_for('get_list_of_users_favorites', user_id=user_id))
+
+    # This was for testing when no UI was implemented
+    # return f"Added movie: {new_movie.id}: {new_movie.title}"
 
 
 
@@ -154,7 +166,10 @@ def update_movie(user_id, movie_id):
     if updated_movie.user_id != user_id:
         return "Movie does not belong to this user"
 
-    return f"Updated movie: {updated_movie.id}: {updated_movie.title}"
+    return redirect(url_for('get_list_of_users_favorites', user_id=user_id))
+
+    # This was good for BE testing when no UI was available
+    # return f"Updated movie: {updated_movie.id}: {updated_movie.title}"
 
 @app.route('/users/<int:user_id>/movies/<int:movie_id>/delete', methods=['POST'])
 def delete_movie(user_id, movie_id):
@@ -179,7 +194,10 @@ def delete_movie(user_id, movie_id):
     if not success:
         return "Movie not found"
 
-    return f"Deleted movie '{movie_title}' from user {user_id}'s favorites"
+    return redirect(url_for('get_list_of_users_favorites', user_id=user_id))
+
+    # Good for BE, now with UI we do not need it anymore
+    # return f"Deleted movie '{movie_title}' from user {user_id}'s favorites"
 
 
 if __name__ == '__main__':
