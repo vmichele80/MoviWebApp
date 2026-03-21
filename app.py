@@ -189,20 +189,30 @@ def delete_movie(user_id, movie_id):
             break
 
     if movie_to_delete is None:
-        return "Movie not found for this user"
+        flash("Movie not found for this user.")
+        return redirect(url_for('get_list_of_users_favorites', user_id=user_id))
 
     movie_title = movie_to_delete.title
 
     success = data_manager.delete_movie(movie_id)
 
     if not success:
-        return "Movie not found"
+        flash("Movie could not be deleted.")
+        return redirect(url_for('get_list_of_users_favorites', user_id=user_id))
 
+    flash(f"Movie '{movie_title}' deleted successfully.")
     return redirect(url_for('get_list_of_users_favorites', user_id=user_id))
 
     # Good for BE, now with UI we do not need it anymore
     # return f"Deleted movie '{movie_title}' from user {user_id}'s favorites"
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html"), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template("500.html"), 500
 
 if __name__ == '__main__':
     # This has been moved out at the beginning of the file
