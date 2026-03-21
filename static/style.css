@@ -1,0 +1,13 @@
+.flash-messages {
+    list-style: none;
+    padding: 0;
+}
+
+.flash-messages li {
+    background-color: #f8d7da;
+    color: #842029;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #f5c2c7;
+    border-radius: 4px;
+}
