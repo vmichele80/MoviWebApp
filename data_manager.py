@@ -39,18 +39,22 @@ class DataManager:
         # The process is similar to adding a new user.
         # I choose to fetch the API data within the app.py
         # and pass it as a movie dictionary
-        new_movie = Movie(
-            title = movie["title"],
-            director = movie["director"],
-            year = movie["year"],
-            poster_url = movie["poster_url"],
-            user_id = movie["user_id"]
-        )
-        db.session.add(new_movie)
-        db.session.commit()
+        try:
+            new_movie = Movie(
+                title = movie["title"],
+                director = movie["director"],
+                year = movie["year"],
+                poster_url = movie["poster_url"],
+                user_id = movie["user_id"]
+            )
+            db.session.add(new_movie)
+            db.session.commit()
 
-        return new_movie
+            return new_movie
 
+        except Exception:
+            db.session.rollback()
+            raise
 
         # Consider for later
         # Use the title parameter passed instead of movie

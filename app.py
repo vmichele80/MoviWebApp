@@ -127,19 +127,24 @@ def add_movie_to_favorites(user_id):
         flash("Please provide a movie title.")
         return redirect(url_for('get_list_of_users_favorites', user_id=user_id))
 
-    # here we need furthermore to fetch the information from the IMDb service
-    movie_data = retrieve_movie_data_from_api(movie_title)
+    try:
+        # here we need furthermore to fetch the information from the IMDb service
+        movie_data = retrieve_movie_data_from_api(movie_title)
 
-    if movie_data is None:
-        flash("Movie not found.")
+        if movie_data is None:
+            flash("Movie not found.")
+            return redirect(url_for('get_list_of_users_favorites', user_id=user_id))
+
+        movie_data["user_id"] = user_id
+        #now movie_data is complete and can be passed over the function
+        data_manager.add_movie(movie_data)
+
+        flash(f"Movie '{movie_data['title']}' added successfully.")
         return redirect(url_for('get_list_of_users_favorites', user_id=user_id))
 
-    movie_data["user_id"] = user_id
-    #now movie_data is complete and can be passed over the function
-    data_manager.add_movie(movie_data)
-
-    flash(f"Movie '{movie_data['title']}' added successfully.")
-    return redirect(url_for('get_list_of_users_favorites', user_id=user_id))
+    except Exception as e:
+        flash(f"An error occurred while adding the movie: {str(e)}")
+        return redirect(url_for('get_list_of_users_favorites', user_id=user_id))
 
     # This was for testing when no UI was implemented
     # return f"Added movie: {new_movie.id}: {new_movie.title}"
