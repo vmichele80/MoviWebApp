@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template, redirect, url_for
 from data_manager import DataManager
 from models import db, Movie
 from api_requests import retrieve_movie_data_from_api
@@ -35,6 +35,7 @@ def index():
     users = data_manager.get_users()
     return render_template('index.html', users=users)
 
+# potentially to be removes as not used. but let's see
 @app.route('/users', methods=['GET'])
 def list_users():
     """
@@ -49,18 +50,29 @@ def list_users():
     return "<br>".join([f"{user.id}: {user.name}" for user in users])
 
 
-@app.route("/add_user", methods=['POST'])
+@app.route("/users", methods=['POST'])
 def create_user():
     """
-    it adds a new user
+    When the user submits the “add user” form, a POST request is made.
+    The server receives the new user info, adds it to the database, then
+    redirects back to /
     """
     name = request.form.get("name")
 
     if not name:
         return "Provide a name"
 
+    """    
+    # need to change to make it behave properly as an endpoint
+    # this was useful for testing
     user = data_manager.create_user(name)
     return f"Created user {user.id}: {user.name}"
+    """
+
+    #creates the new user
+    data_manager.create_user(name)
+    # redirect to the index page so that the new added user can be seen
+    return redirect(url_for('index'))
 
 @app.route("/update_user", methods=['POST'])
 def update_user():
