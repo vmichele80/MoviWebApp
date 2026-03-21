@@ -18,3 +18,7 @@ data/
 
 # OS files
 .DS_Store
+
+# Testing file
+test_data_manager.py
+test_api_requests_integration.py

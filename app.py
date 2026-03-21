@@ -1,6 +1,7 @@
 from flask import Flask, request
 from data_manager import DataManager
 from models import db, Movie
+from api_requests import retrieve_movie_data_from_api
 import os
 
 app = Flask(__name__)
@@ -33,7 +34,7 @@ def home():
     """
     return "Welcome to MoviWeb App!"
 
-@app.route('/users', methods=['POST'])
+@app.route('/users', methods=['GET'])
 def list_users():
     """
     When the user submits the “add user” form, a POST request is made.
@@ -47,9 +48,12 @@ def list_users():
     return "<br>".join([f"{user.id}: {user.name}" for user in users])
 
 
-@app.route("/add_user")
+@app.route("/add_user", methods=['POST'])
 def add_user():
-    name = request.args.get("name")
+    """
+    it adds a new user
+    """
+    name = request.form.get("name")
 
     if not name:
         return "Provide a name"
@@ -57,13 +61,17 @@ def add_user():
     user = data_manager.create_user(name)
     return f"Created user {user.id}: {user.name}"
 
-@app.route("/update_user")
+@app.route("/update_user", methods=['POST'])
 def update_user():
-    user_id = request.args.get("user_id")
-    new_name = request.args.get("name")
+    """
+    It updates details about the user in case of misspellings
+    """
+
+    user_id = request.form.get("user_id")
+    new_name = request.form.get("name")
 
     if not user_id or not new_name:
-        return "Use /update_user?user_id=2&name=Anna"
+        return "Provide user_id and name"
 
     updated_user = data_manager.update_user(int(user_id), new_name)
 
@@ -72,40 +80,99 @@ def update_user():
 
     return f"Updated user: {updated_user.id}: {updated_user.name}"
 
+
+
 @app.route('/users/<int:user_id>/movies', methods=['GET'])
-    def get_list_of_users_favorites():
+def get_list_of_users_favorites(user_id):
     """When you click on a user name, the app retrieves that user’s list of
     favorite movies and displays it."""
-    pass
+    movies = data_manager.get_movies(user_id)
+
+    if not movies:
+        return f"No favorite movies found for user {user_id}"
+
+    return "<br>".join([
+        f"{movie.id}: {movie.title} - {movie.director} ({movie.year})"
+        for movie in movies
+    ])
 
 
 @app.route('/users/<int:user_id>/movies', methods=['POST'])
-    def add_movie_to_favorites():
+def add_movie_to_favorites(user_id):
     """
     Add a new movie to a user’s list of favorite movies.
     """
-    #here we need furthermore to fetch the information from the IMDb service
-    pass
+    movie_title = request.form.get("title") or request.args.get("title")
+
+    if not movie_title:
+        return "Provide a movie title"
+
+    # here we need furthermore to fetch the information from the IMDb service
+    movie_data = retrieve_movie_data_from_api(movie_title)
+
+    if movie_data is None:
+        return "Movie not found"
+
+    movie_data["user_id"] = user_id
+    #now movie_data is complete and can be passed over the function
+    new_movie = data_manager.add_movie(movie_data)
+
+    return f"Added movie: {new_movie.id}: {new_movie.title}"
+
 
 
 @app.route('/users/<int:user_id>/movies/<int:movie_id>/update', methods=['POST'])
-    def update_movie():
+def update_movie(user_id, movie_id):
     """
-    Modify the title of a specific movie in a user’s list, without depending 
+    Modify the title of a specific movie in a user’s list, without depending
     on OMDb for corrections.
     """
-    pass
+    new_title = request.form.get("title") or request.args.get("title")
 
-@app.route('/users/<int:user_id>/movies/<int:movie_id>/delete', methods=['POST']
-    def delete_movie():
+    if not new_title:
+        return "Provide a new title"
+
+    updated_movie = data_manager.update_movie(movie_id, {"title": new_title})
+
+    if updated_movie is None:
+        return "Movie not found"
+
+    # Checks if movie belongs to this user favorites
+    if updated_movie.user_id != user_id:
+        return "Movie does not belong to this user"
+
+    return f"Updated movie: {updated_movie.id}: {updated_movie.title}"
+
+@app.route('/users/<int:user_id>/movies/<int:movie_id>/delete', methods=['POST'])
+def delete_movie(user_id, movie_id):
     """
     Remove a specific movie from a user’s favorite movie list.
     """
-    pass
+    movies = data_manager.get_movies(user_id)
+    movie_to_delete = None
+
+    for movie in movies:
+        if movie.id == movie_id:
+            movie_to_delete = movie
+            break
+
+    if movie_to_delete is None:
+        return "Movie not found for this user"
+
+    movie_title = movie_to_delete.title
+
+    success = data_manager.delete_movie(movie_id)
+
+    if not success:
+        return "Movie not found"
+
+    return f"Deleted movie '{movie_title}' from user {user_id}'s favorites"
 
 
 if __name__ == '__main__':
-  #with app.app_context():
-    #db.create_all()
+    # This has been moved out at the beginning of the file
+    # as was creating problems with the db creation
 
+    # with app.app_context():
+    # db.create_all()
   app.run()
