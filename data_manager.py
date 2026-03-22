@@ -1,7 +1,7 @@
-from models import db, User, Movie
+from models import db, Movie , User
 
 class DataManager:
-    # Define Crud operations as methods
+    """Define Crud operations as methods"""
     def create_user(self, name):
         new_user = User(name=name)
 
@@ -14,11 +14,11 @@ class DataManager:
     # Why that??
 
     def get_users(self):
-        # Return a list of all users in your database.
+        """Return a list of all users in your database."""
         return User.query.all()
 
-    # I found myself insert the same user by mistake
     def update_user(self, user_id, new_name):
+        """This helps change the name of the user programmatically"""
         user = User.query.get(user_id)
         if user is None:
             return None
@@ -27,18 +27,15 @@ class DataManager:
         db.session.commit()
         return user
 
-
     def get_movies(self, user_id):
-        # Return a list of all movies of a specific user.
+        """Return a list of all movies of a specific user."""
         return Movie.query.filter_by(user_id=user_id).all()
 
-
-
     def add_movie(self, movie):
-        # Add a new movie to a user’s favorites.
-        # The process is similar to adding a new user.
-        # I choose to fetch the API data within the app.py
-        # and pass it as a movie dictionary
+        """Add a new movie to a user’s favorites.
+        The process is similar to adding a new user.
+        I choose to fetch the API data within the app.py
+        and pass it as a movie dictionary"""
         try:
             new_movie = Movie(
                 title = movie["title"],
@@ -56,15 +53,11 @@ class DataManager:
             db.session.rollback()
             raise
 
-        # Consider for later
-        # Use the title parameter passed instead of movie
-        # to query the IMDB api (fuzzy search)
-        # and save the response into the DB
-
-        # the movie id is created automatically
-        # the user_id comes from the user who is adding this movie
-
     def update_movie(self, movie_id, updated_data):
+        """We only currently allow to change the title
+        but code is ready to change all of the details
+        of the movie manually
+        """
         movie = Movie.query.get(movie_id)
         if movie is None:
             return None
@@ -78,9 +71,8 @@ class DataManager:
         db.session.commit()
         return movie
 
-
     def delete_movie(self, movie_id):
-        # Delete the movie from the user’s list of favorites.
+        """Delete the movie from the user’s list of favorites."""
         movie_to_delete = Movie.query.get(movie_id)
         if movie_to_delete is None:
             return False
