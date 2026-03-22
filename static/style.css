@@ -188,3 +188,8 @@ a:hover {
 .text-secondary {
     color: var(--app-text-muted) !important;
 }
+
+.app-brand img {
+    height: 40px;
+    object-fit: contain;
+}

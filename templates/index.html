@@ -2,15 +2,25 @@
 
 {% block content %}
 <section class="hero-section rounded-4 p-4 p-md-5 mb-5">
-    <div class="row align-items-center g-4">
+   <div class="row align-items-center g-4">
+
+        <!-- Left: Text -->
         <div class="col-lg-7">
             <p class="hero-kicker mb-2">Your evening movie library</p>
-            <h1 class="display-5 fw-bold mb-3">Browse, collect, and curate your favourite movies.</h1>
+            <h1 class="display-5 fw-bold mb-3">
+                Browse, collect, and curate your favourite movies.
+            </h1>
             <p class="hero-text mb-4">
                 Build your personal movie universe with a warm cinematic interface.
                 Explore libraries of other users, and keep your favourites beautifully organized.
             </p>
+        </div>
 
+        <!-- Right: Image -->
+        <div class="col-lg-5 text-center">
+            <img src="{{ url_for('static', filename='movie_site_logo.png') }}"
+                 alt="Movie Nights at Home"
+                 class="img-fluid hero-image">
         </div>
 
     </div>
@@ -19,9 +29,9 @@
 <section class="row g-4">
     <div class="col-lg-7">
         <div class="content-panel rounded-4 p-4 h-100">
-            <h2 class="h4 mb-3">Users</h2>
+            <h2 class="h4 mb-3">Member's movie collections</h2>
             <p class="section-text">
-                Select a user to open their movie library and manage favorites.
+                Select a user to open their movie library and manage favourites.
             </p>
 
             {% if users %}
