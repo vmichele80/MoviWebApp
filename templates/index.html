@@ -1,23 +1,79 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Users</h1>
+<section class="hero-section rounded-4 p-4 p-md-5 mb-5">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+            <p class="hero-kicker mb-2">Your evening movie library</p>
+            <h1 class="display-5 fw-bold mb-3">Browse, collect, and curate your favourite movies.</h1>
+            <p class="hero-text mb-4">
+                Build your personal movie universe with a warm cinematic interface.
+                Explore libraries of other users, and keep your favourites beautifully organized.
+            </p>
 
-    <ul>
-        {% for user in users %}
-            <li>
-                <a href="{{ url_for('get_list_of_users_favorites', user_id=user.id) }}">
-                    {{ user.name }}
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
+        </div>
 
-    <h2>Add New User</h2>
+    </div>
+</section>
 
-    <form action="{{ url_for('create_user') }}" method="post">
-        <label for="name">User name:</label>
-        <input type="text" id="name" name="name" required>
-        <button type="submit">Add User</button>
-    </form>
+<section class="row g-4">
+    <div class="col-lg-7">
+        <div class="content-panel rounded-4 p-4 h-100">
+            <h2 class="h4 mb-3">Users</h2>
+            <p class="section-text">
+                Select a user to open their movie library and manage favorites.
+            </p>
+
+            {% if users %}
+                <div class="row g-3 mt-1">
+                    {% for user in users %}
+                        <div class="col-md-6">
+                            <div class="card app-card h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <h3 class="h5 card-title mb-2">{{ user.name }}</h3>
+                                    <p class="card-text text-secondary mb-4">
+                                        Open this user’s favorite movie collection.
+                                    </p>
+                                    <a href="{{ url_for('get_list_of_users_favorites', user_id=user.id) }}"
+                                       class="btn btn-app-secondary mt-auto">
+                                        Open library
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state rounded-4 p-4 mt-3">
+                    <p class="mb-0">No users available yet.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-lg-5" id="add-user">
+        <div class="content-panel rounded-4 p-4 h-100">
+            <h2 class="h4 mb-3">Add new user</h2>
+            <p class="section-text">Create a new profile to start collecting favorite movies.</p>
+
+            <form action="{{ url_for('create_user') }}" method="post" class="mt-4">
+                <div class="mb-3">
+                    <label for="name" class="form-label">User name</label>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        class="form-control app-input"
+                        placeholder="Enter a user name"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="btn btn-app-primary w-100">
+                    Add user
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
 {% endblock %}

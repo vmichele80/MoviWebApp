@@ -1,13 +1,190 @@
-.flash-messages {
-    list-style: none;
-    padding: 0;
+:root {
+    --app-bg: #1C1C1E;
+    --app-surface: #2A2A2D;
+    --app-primary: #7A1E2C;
+    --app-cta: #FFB703;
+    --app-secondary: #D36A6A;
+    --app-text: #F8F3E9;
+    --app-text-muted: #AFAFAF;
+    --app-border: rgba(248, 243, 233, 0.08);
+    --app-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
 }
 
-.flash-messages li {
-    background-color: #f8d7da;
-    color: #842029;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #f5c2c7;
-    border-radius: 4px;
+body.app-body {
+    background: radial-gradient(circle at top, #2a1e21 0%, var(--app-bg) 42%);
+    color: var(--app-text);
+    min-height: 100vh;
+    font-family: Inter, Arial, sans-serif;
+}
+
+.app-navbar {
+    background-color: rgba(28, 28, 30, 0.92);
+    border-bottom: 1px solid var(--app-border);
+    backdrop-filter: blur(8px);
+}
+
+.app-brand {
+    color: var(--app-cta) !important;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+
+.app-nav-link {
+    color: var(--app-text-muted) !important;
+}
+
+.app-nav-link:hover {
+    color: var(--app-text) !important;
+}
+
+.hero-section,
+.content-panel,
+.hero-panel,
+.empty-state,
+.app-card,
+.app-alert {
+    background: var(--app-surface);
+    border: 1px solid var(--app-border);
+    box-shadow: var(--app-shadow);
+}
+
+.hero-section {
+    overflow: hidden;
+}
+
+.hero-kicker {
+    color: var(--app-cta);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.8rem;
+}
+
+.hero-text,
+.section-text {
+    color: var(--app-text-muted);
+    max-width: 60ch;
+}
+
+.app-user-list,
+.app-user-item {
+    background: transparent;
+}
+
+.app-user-item {
+    background-color: transparent;
+    color: var(--app-text);
+    border-color: var(--app-border);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.app-user-item:hover {
+    background-color: rgba(122, 30, 44, 0.25);
+    color: var(--app-text);
+    transform: translateY(-2px);
+}
+
+.app-badge {
+    background-color: var(--app-primary);
+    color: var(--app-text);
+}
+
+.app-card {
+    background-color: var(--app-surface);
+    color: var(--app-text);
+    border-radius: 1rem;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.app-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.35);
+}
+
+.movie-card {
+    overflow: hidden;
+}
+
+.movie-poster {
+    height: 360px;
+    object-fit: cover;
+    background: #111;
+}
+
+.movie-poster-placeholder {
+    height: 360px;
+    background: linear-gradient(135deg, rgba(122, 30, 44, 0.5), rgba(255, 183, 3, 0.18));
+    color: var(--app-text-muted);
+    font-weight: 600;
+}
+
+.app-input {
+    background-color: #202023;
+    color: var(--app-text);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.app-input:focus {
+    background-color: #202023;
+    color: var(--app-text);
+    border-color: var(--app-cta);
+    box-shadow: 0 0 0 0.2rem rgba(255, 183, 3, 0.2);
+}
+
+.form-label {
+    color: var(--app-text);
+}
+
+.btn-app-primary {
+    background-color: var(--app-cta);
+    border-color: var(--app-cta);
+    color: #1a1a1a;
+    font-weight: 700;
+}
+
+.btn-app-primary:hover {
+    background-color: #e5a503;
+    border-color: #e5a503;
+    color: #111;
+}
+
+.btn-app-secondary {
+    background-color: var(--app-primary);
+    border-color: var(--app-primary);
+    color: var(--app-text);
+}
+
+.btn-app-secondary:hover {
+    background-color: #641724;
+    border-color: #641724;
+    color: var(--app-text);
+}
+
+.btn-app-danger {
+    background-color: transparent;
+    border: 1px solid var(--app-secondary);
+    color: var(--app-secondary);
+}
+
+.btn-app-danger:hover {
+    background-color: var(--app-secondary);
+    color: #1a1a1a;
+}
+
+.app-alert {
+    color: var(--app-text);
+    border-left: 4px solid var(--app-cta);
+}
+
+a {
+    color: var(--app-cta);
+    text-decoration: none;
+}
+
+a:hover {
+    color: #ffd166;
+}
+
+.text-secondary {
+    color: var(--app-text-muted) !important;
 }
